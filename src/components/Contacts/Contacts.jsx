@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   StyledContactsContainer,
   StyledContactItem,
@@ -7,18 +6,29 @@ import {
   StyledContactNumber,
   StyledDeleteButton,
 } from './Contacts.styled';
+import { getVisibleContacts } from 'redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from 'redux/contactsSlice';
 
-const Contacts = ({ contacts, onDelete }) => {
+const Contacts = () => {
+  const contactsList = useSelector(getVisibleContacts);
+
+  const dispatch = useDispatch();
+
+  const handleDeleteContact = id => {
+    dispatch(deleteContact(id));
+  };
+
   return (
     <StyledContactsContainer>
       <ul>
-        {contacts.map(contact => (
+        {contactsList.map(contact => (
           <StyledContactItem key={contact.id}>
             <StyledContactName>{contact.name}:</StyledContactName>
             <StyledContactNumber>{contact.number}</StyledContactNumber>
             <StyledDeleteButton
               type="button"
-              onClick={() => onDelete(contact.id)}
+              onClick={() => handleDeleteContact(contact.id)}
             >
               Delete
             </StyledDeleteButton>
@@ -27,17 +37,6 @@ const Contacts = ({ contacts, onDelete }) => {
       </ul>
     </StyledContactsContainer>
   );
-};
-
-Contacts.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default Contacts;
