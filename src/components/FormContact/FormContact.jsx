@@ -1,14 +1,30 @@
 import React from 'react';
-import { StyledInput, StyledButton, Title, Form } from './Phonebook.styled';
-import { useDispatch } from 'react-redux';
+import { StyledInput, StyledButton, Title, Form } from './FormContact.styled';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/contactsSlice';
+import Notiflix from 'notiflix';
+import { getContacts } from 'redux/selectors';
 
-const Phonebook = () => {
+const FormContact = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
   const handleSubmit = e => {
     e.preventDefault();
+
+    const isContactExist = contacts.find(
+      contact =>
+        contact.name.toLowerCase() === e.target.name.value.toLowerCase()
+    );
+    if (isContactExist) {
+      Notiflix.Notify.failure(
+        `Contact "${e.target.name.value}" is already in contacts`
+      );
+      return;
+    }
+
     dispatch(addContact(e.target.name.value, e.target.number.value));
+    Notiflix.Notify.success('Contact added');
     e.target.reset();
   };
 
@@ -38,4 +54,4 @@ const Phonebook = () => {
   );
 };
 
-export default Phonebook;
+export default FormContact;

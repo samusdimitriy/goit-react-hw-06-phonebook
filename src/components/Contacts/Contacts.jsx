@@ -9,6 +9,7 @@ import {
 import { getVisibleContacts } from 'redux/selectors';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact } from 'redux/contactsSlice';
+import Notiflix from 'notiflix';
 
 const Contacts = () => {
   const contactsList = useSelector(getVisibleContacts);
@@ -17,6 +18,11 @@ const Contacts = () => {
 
   const handleDeleteContact = id => {
     dispatch(deleteContact(id));
+    Notiflix.Notify.success(
+      `Contact "${
+        contactsList.find(contact => contact.id === id).name
+      }" successfully deleted`
+    );
   };
 
   return (
